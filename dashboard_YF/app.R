@@ -10,7 +10,9 @@ library(shinydashboard)
 library(dashboardthemes)
 library(shinyWidgets)
 
-df<-read.csv("/Users/lingyunfan/all_repos/cinema_project/raw.csv")
+
+
+df<-read.csv("https://raw.githubusercontent.com/QMSS-G5063-2022/Group_X_Cinema/main/cinema_dash/data/raw.csv",check.names=FALSE)
 tri<-data.frame(x=c(0,100,100), y=c(0,0,100), t=c('a', 'a', 'a'), r=c(1,2,3))
 regression<-lm(tomatometer_rating~audience_rating, data = df)
 alpha<-coef(regression)[1]
@@ -94,7 +96,7 @@ ui<-dashboardPage(
         ),
       
       box(width = 4,
-          tags$h4("Are fim critics losing sync with audiences?",style = "padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;"),
+          tags$h4("Are film critics losing sync with audiences?",style = "padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;"),
           tags$h4("What kind of movies that are acclaimed by professional reviewers are yet not likely to be enjoyed by most moviegoers?",style = "padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;"),
           tags$h4("Visulizations would answer these questions strikingly.",style = "padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;")),
 
@@ -105,7 +107,7 @@ ui<-dashboardPage(
         HTML("<intro><b>Tab 1</b></intro>"),
         tags$br(),
         tags$br(),
-        HTML("<intro><b>The bubble chart</b> displays the distributions of Rotten Tomatoes' critic and audience ratings (the critic ratings are technically refers to as the <em>Tomatometers</em>) for more than 2000 popular films. Box-office revenue is represented by bubble size.</intro>"),
+        HTML("<intro><b>The bubble chart</b> displays the distribution of Rotten Tomatoes' critic and audience ratings (the critic ratings are technically referred to as the <b>Tomatometers</b>) for more than 2000 popular films. Box-office revenue is represented by bubble size.</intro>"),
         tags$br(),
         tags$br(),
         HTML("<intro>Filter those movies, and you may find the Tomatometers covary with the audience scores in a different manner (<b>the red line that fit the filtered data points best should be detached from the grey one</b>).</intro>"),
