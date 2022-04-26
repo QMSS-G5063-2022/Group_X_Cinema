@@ -5,9 +5,9 @@ account: supertrashpanda
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 6108457
-bundleId: 5807761
+bundleId: 5836423
 url: https://supertrashpanda.shinyapps.io/critics-audience/
-when: 1650231102.30553
-lastSyncTime: 1650231102.30554
+when: 1650931684.27512
+lastSyncTime: 1650931684.27514
 asMultiple: FALSE
 asStatic: FALSE
