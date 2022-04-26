@@ -5,6 +5,9 @@ We are interested in exploring cinema with Data Visualization. As a visual mediu
 
 ### Topic one: Critic rating vs. Audience rating by Yunfan Ling
 The interactive visulizations are deployed [here](https://supertrashpanda.shinyapps.io/critics-audience/)
+1. A Bubble Chart demonstrating the correlation between critic ratings and audience scores.
+2. A Bar Plot variation that displays the top 20 movies that are received with the most massive critics-audience divides.
+estimated presentation time: 2 min
 
 #### Team Members
 - Zhiqing Li  zl3064@columbia.edu
