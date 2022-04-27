@@ -14,6 +14,7 @@ library(bslib)
 
 df<-read.csv("https://raw.githubusercontent.com/supertrashpanda/JustCSV/main/raw.csv",check.names=FALSE)
 df$genres<-lapply(df$genres.x, function(x) as.list(str_trim(strsplit(x, ",")[[1]])))
+
 df$primary_genre<-unlist(lapply(df$genres, function(x) x[[1]][1]))
 
 JScode <-
@@ -29,6 +30,7 @@ JScode <-
       }
       $('#revenue').data('ionRangeSlider').update({'values':vals})
     }, 5)})"
+
 
 contain_yes <- function(list1,list2) {
   result<-FALSE
@@ -47,6 +49,7 @@ ticks<-seq(1925,2010,10)
 
 
 ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navbar-static-top {margin-bottom:0px;padding-bottom:0px;}")),
+
 
                tabPanel("Critics VS. Audience",
                         #tags$style(HTML(".tabbable > .nav > li > a {margin:0px;padding:0px;}")),
@@ -89,11 +92,11 @@ ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navba
                 ticks=FALSE,
                 value=c(1925,2017),
                 sep=""),
-    tags$script(HTML("
-        $(document).ready(function() {setTimeout(function() {
+    tags$script(HTML("$(document).ready(function() {setTimeout(function() {
           supElement = document.getElementById('yearend').parentElement;
           $(supElement).find('span.irs-max, span.irs-min').remove();}, 10);})
       ")),
+
     tags$head(tags$script(HTML(JScode))),
     sliderInput("revenue",
                 label =tags$span("Box office revenue (USDs):",style = "padding-left:0px;font-weight: bold;font-size:13px;margin-bottom:0px;padding-bottom:0px"),
@@ -107,6 +110,7 @@ ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navba
           supElement = document.getElementById('time').parentElement;
           $(supElement).find('span.irs-max, span.irs-min').remove();}, 50);})
       ")),
+
     br(),
     tags$h5("Check out each major genre:",style = "padding-left:10px;font-weight: bold;margin-bottom:0px;font-size:13px;"),
     tags$h5("(The genres are sorted in descending order of critic preference. Since one movie can be of multiple genres, these subsets overlap)",
@@ -178,6 +182,7 @@ ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navba
   ),
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "style.css"))
   
+
 )
 ),
 #############################End of 凌云帆's UI#################################
@@ -190,6 +195,7 @@ tabPanel("4")#new visualization layout here
 
 server<-function(input, output,session) {
   
+
 observe({
   if((length(input$genres)!=0)|(length(input$movie)!=0)){
     updateRadioButtons(session, "genre", selected = "All Movies")
@@ -202,10 +208,12 @@ data= reactive({
     a <- df[which((df$year>=input$yearend[1])&(df$year<=input$yearend[2])),]
     if(nrow(a)==0){return(a)}
     a <- a[which((a$revenue>=10^(input$revenue[1]-1))&(a$revenue<=10^(input$revenue[2]-1))),]
+
     if(input$genre!="All Movies"){a<-a[which(unlist(lapply(a$genres,function(x) input$genre%in%x))),]}
     return(a)
   })
   
+
 output$audience <- renderValueBox({
   valueBox(
     value = tags$p(round(mean(data()$audience_rating,na.rm=TRUE),2),style="font-size:38px;font-family: Century Gothic, fantasy;"),
@@ -237,9 +245,9 @@ output$ratio <- renderValueBox({
       icon =if (nrow(data())==0){white} else if(mean(data()$crt_prf,na.rm=TRUE)>1) {love} else {white},
       width = 2,
       color = "maroon")
-})
-
+  })
   
+
 output$plot <- renderPlotly({
   if(nrow(data())==0){
     ggplotly(ggplot()+
@@ -314,8 +322,9 @@ output$plot <- renderPlotly({
                      axis.text.x = element_text(colour = "grey85",family = "Arial",size=10))
              )%>%config(displayModeBar = F)
   }
-  })
 
+  })
+  
 }
 
 
