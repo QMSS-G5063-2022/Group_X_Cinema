@@ -191,7 +191,7 @@ tabPanel("4")#new visualization layout here
 server<-function(input, output,session) {
   
 observe({
-  if(length(input$genres)!=0){
+  if((length(input$genres)!=0)|(length(input$movie)!=0)){
     updateRadioButtons(session, "genre", selected = "All Movies")
   }
 })
@@ -200,6 +200,7 @@ data= reactive({
     if(input$movie!=""){return(df[which(df$title==input$movie),])}
     if(length(input$genres)>0){return(df[which(unlist(lapply(df$genres, function(x) contain_yes(x,input$genres)))),])}
     a <- df[which((df$year>=input$yearend[1])&(df$year<=input$yearend[2])),]
+    if(nrow(a)==0){return(a)}
     a <- a[which((a$revenue>=10^(input$revenue[1]-1))&(a$revenue<=10^(input$revenue[2]-1))),]
     if(input$genre!="All Movies"){a<-a[which(unlist(lapply(a$genres,function(x) input$genre%in%x))),]}
     return(a)
@@ -231,9 +232,9 @@ love_value<-reactive({tags$p(scales::percent((mean(data()$crt_prf,na.rm=TRUE))),
 white_value<-reactive({tags$p(scales::percent((mean(data()$crt_prf,na.rm=TRUE))),style="font-size:38px;font-family: Century Gothic, fantasy;")})
 output$ratio <- renderValueBox({
     valueBox(
-      value = if(mean(data()$crt_prf,na.rm=TRUE)>1) {love_value()} else {white_value()},
+      value = if (nrow(data())==0){"NaN"} else if(mean(data()$crt_prf,na.rm=TRUE)>1) {love_value()} else {white_value()},
       subtitle = tags$p("Critic Preference",style="font-size:130%;font-family: Century Gothic, fantasy;"),
-      icon =if(mean(data()$crt_prf,na.rm=TRUE)>1) {love} else {white},
+      icon =if (nrow(data())==0){white} else if(mean(data()$crt_prf,na.rm=TRUE)>1) {love} else {white},
       width = 2,
       color = "maroon")
 })
