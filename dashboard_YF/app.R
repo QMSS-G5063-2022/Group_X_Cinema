@@ -146,15 +146,20 @@ ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navba
         title = tagList(shiny::icon("bar-chart-o")),
         tabPanel("Audience and Critic Ratings",
                  plotlyOutput(outputId = "plot", height = "40em")),
-        tabPanel("20 Films the Critics And Audience Disagree on the Most",
+        tabPanel("20 Most Divisive Films",
                  div(img(src = "gaps.png", height = 600, width = 400), style="text-align: center;")
-                 )
-        ),
+                 ),
+        tabPanel("Genre-wise Distribution of Ratings",
+                 div(img(src = "violin.png", height = 600, width = 600), style="text-align: center;")
+        )
+        
+
+    ),
       
       box(width = 4,
-          tags$h4("Are film critics losing sync with audiences?",style = "padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;color:gold;"),
-          tags$h4("What kind of movies that are acclaimed by professional reviewers are yet not likely to be enjoyed by most moviegoers?",style = "color:gold;padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;"),
-          tags$h4("Visulizations answer such questions strikingly.",style = "padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;color:gold;")),
+          tags$h4("Are film critics losing sync with audiences?",style = "padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;color:white;"),
+          tags$h4("What kind of movies that are acclaimed by professional reviewers are yet not likely to be enjoyed by most moviegoers?",style = "color:white;padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;"),
+          tags$h4("Visulizations answer such questions strikingly.",style = "padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;color:white;")),
 
       box(
         width = 4,
@@ -182,7 +187,6 @@ ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navba
   ),
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "style.css"))
   
-
 )
 ),
 #############################End of 凌云帆's UI#################################
