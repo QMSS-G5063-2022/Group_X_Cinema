@@ -44,7 +44,7 @@ get_frequency = function(df){
 }
 
 
-
+######UI start
 ui<-dashboardPage(
     dashboardHeader(title =span("Critics VS. Audience",style="font-size:20px;")),
     dashboardSidebar(
@@ -174,7 +174,7 @@ ui<-dashboardPage(
 )    
 
 
-
+####end UI
 
 server<-function(input, output,session) {
   
