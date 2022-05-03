@@ -21,10 +21,12 @@ library(ggthemes)
 library(quanteda)
 library(tokenizers)
 library(janitor)
+library(plotly)
 
 movie_df = read.csv("movie_df_final1.csv")
 script_df = read.csv("script_df_final1.csv")
 sentiment_line = read.csv("sentiment_line.csv")
+plotly_data = read.csv("movie.csv")
 
 movie_df$genre1 = gsub(",.*$", "", movie_df$genre)
 
@@ -173,20 +175,25 @@ ui<-dashboardPage(
                                   plotOutput("genre", height = "40em",
                                              width = "100%")
                          )
-                      
+                         
                   )
-                ),
-                
-                tabItem(tabName = "triple",
-                        fluidRow(
-                          
-                        )
-                        
+                )
+        ),
+        
+        tabItem(tabName = "triple",
+                fluidRow(
+                  box(
+                    title = "Rating Difference vs. Sentiment Score",
+                    width = 12,
+                    height = "60em",
+                    plotlyOutput("plotly_plot")
+                  )
                 )
         )
+        
       )
     )
-)    
+)
 
 
 
@@ -408,6 +415,25 @@ server<-function(input, output,session) {
                                             size = 0.5, linetype = "solid"),
             plot.background = element_rect(fill = "#343E48")) +
       xlim(input$percentage[1], input$percentage[2])
+  })
+  
+  output$plotly_plot = renderPlotly({
+    plot_ly(plotly_data, x=~ratingdiff, y=~sentiment, size=~gross, color=~gross,
+            type="scatter", sizes=c(10,500),
+            markers=list(opacity=0.7),
+            hoverinfo="text",
+            hovertext=paste("Movie:",plotly_data$name, "<br> Sentiment:",plotly_data$sentiment,
+                            "<br> Difference in Critic vs. Audience Rating:", plotly_data$ratingdiff,
+                            "<br> Box Office (M):", plotly_data$gross)) %>%
+      layout(xaxis = list(title="Difference in Critics vs. Audience Ratings", color = '#ffffff'),
+             yaxis = list(title="Sentiment Score", color = '#ffffff'),
+             title = list(text = 'Critic difference vs. Sentiment Score', font = list(color = "white")),
+             margin = 10,
+             height = 600,
+             paper_bgcolor='#343E48',
+             plot_bgcolor='#343E48') %>% 
+      hide_colorbar()
+      
   })
   
   
