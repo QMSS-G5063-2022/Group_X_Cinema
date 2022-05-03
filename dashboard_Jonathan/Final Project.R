@@ -25,6 +25,8 @@ movie_df = read.csv("movie_df_final1.csv")
 script_df = read.csv("script_df_final1.csv")
 sentiment_line = read.csv("sentiment_line.csv")
 
+movie_df$genre1 = gsub(",.*$", "", movie_df$genre)
+
 get_frequency = function(df){
   df = df %>%
     select(doc_id, text)
@@ -55,7 +57,7 @@ ui<-dashboardPage(
       ),
       
       sidebarMenu(
-        menuItem("Single Movie", tabName = "single", icon = icon("male")),
+        menuItem("Single Movie", tabName = "single", icon = icon("th")),
         menuItem("Comparing Movies", tabName = "double", icon = icon("th")),
         menuItem("Sentiment vs. Rating Difference", tabName = "triple", icon = icon("th"))
       )
@@ -149,15 +151,27 @@ ui<-dashboardPage(
                       label = "Choose a percentile range:", 
                       choices = seq(0,1,0.05),
                       selected = c(0, 1.0)
+                    ),
+
+                    selectInput("genre1",
+                                "Choose a genre:",
+                                choices = c(unique(movie_df$genre1)),
+                                selected = "Drama"
                     )
                     
                   ),
                   
-                  box(width = 9,
-                      tabPanel(title = "Sentiment Plot",
-                               plotOutput("sentimentplot", height = "40em",
-                                          width = "100%")
-                      )
+                  
+                  tabBox(width = 9,
+                         tabPanel(title = "Sentiment Plot",
+                                  plotOutput("sentimentplot", height = "40em",
+                                             width = "100%")
+                         ),
+                         
+                         tabPanel(title = "Genre", 
+                                  plotOutput("genre", height = "40em",
+                                             width = "100%")
+                         )
                       
                   )
                 ),
@@ -214,7 +228,7 @@ server<-function(input, output,session) {
   })
   
   output$sales <- renderValueBox({
-    valueBox(value = movie()$gross, subtitle = ("Box Office"), icon = icon("dollar-sign"),
+    valueBox(value = scales::dollar(round(as.numeric(gsub(",", "",movie()$gross)),2)), subtitle = ("Box Office"), icon = icon("dollar-sign"),
              color = "purple", href = NULL)
   })
   
@@ -340,11 +354,46 @@ server<-function(input, output,session) {
     rbind(df1(), df2()) %>%
       ggplot(aes(x=time, y=sentiment, group=name, color=name)) +
       geom_line(size=2) +
-      ggtitle("Sentiment Score visualization") +
+      ggtitle("Sentiment Score Visualization") +
       ylab("Sentiment Score") + 
       xlab("Percentage of the Script")+
       theme_minimal() +
-      labs(color="title")+
+      labs(color="Title")+
+      theme(title = element_text(size = 15, face = "bold", color = "white"),
+            axis.text=element_text(face = "bold", color = "white",size=12),
+            axis.title=element_text(face = "bold", color = "white"),
+            legend.text=element_text(face = "bold", color = "white",size=12),
+            plot.subtitle = element_text(size=7, face = "bold", color = "white"),
+            axis.line = element_line(colour = "white"),
+            panel.grid.major = element_blank(), 
+            panel.grid.minor = element_blank(),
+            panel.background = element_rect(fill = "#343E48",
+                                            colour = "#343E48",
+                                            size = 0.5, linetype = "solid"),
+            plot.background = element_rect(fill = "#343E48")) +
+      xlim(input$percentage[1], input$percentage[2])
+  })
+  
+  output$genre = renderPlot({
+    df = movie_df %>%
+      select(name, genre1) %>%
+      left_join(sentiment_line, by = "name") %>%
+      filter(genre1 == input$genre1) %>%
+      select(-c(genre1, X)) %>%
+      t() %>%
+      as.data.frame() %>%
+      row_to_names(row_number = 1) %>%
+      add_column(time = seq(0.05, 1, 0.05)) %>%
+      pivot_longer(cols = -time) %>%
+      mutate(value = as.numeric(value))
+    
+    ggplot(df, aes(x=time, y=value, group=name, color=name)) +
+      geom_line(size=1) +
+      ggtitle("Sentiment Score Visualization by Genre") +
+      ylab("Sentiment Score") + 
+      xlab("Percentage of the Script")+
+      theme_minimal() +
+      labs(color="Title")+
       theme(title = element_text(size = 15, face = "bold", color = "white"),
             axis.text=element_text(face = "bold", color = "white",size=12),
             axis.title=element_text(face = "bold", color = "white"),
