@@ -20,6 +20,7 @@ library(wordcloud)
 library(ggthemes)
 library(quanteda)
 library(tokenizers)
+library(janitor)
 
 movie_df = read.csv("movie_df_final1.csv")
 script_df = read.csv("script_df_final1.csv")
