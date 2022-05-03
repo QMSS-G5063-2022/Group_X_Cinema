@@ -7,6 +7,7 @@ library(readr)
 library(ggthemes)
 library(plotly)
 library(shinydashboard)
+library(shinyjs)
 library(dashboardthemes)
 library(shinyWidgets)
 library(bslib)
@@ -129,54 +130,65 @@ ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navba
   ),
   
   dashboardBody(
+    useShinyjs(),
     shinyDashboardThemes(
       theme = "grey_dark"
     ),
-    tags$head(tags$style(HTML('.small-box .icon-large {right: 15px;}'))),
+    tags$head(tags$style(HTML('.small-box .icon-large {right: 15px; top: 25px;}'))),
     fluidRow(
-      tags$head(tags$style(HTML(".small-box {height:120px};"))),
-      valueBoxOutput("audience"),
-      valueBoxOutput("meter"),
-      valueBoxOutput("ratio")
-    ),
+      tags$head(tags$style(HTML(".small-box {height:120px;}"))),
+      mainPanel(width = 12,  
+      valueBoxOutput("audience",width=3),
+      valueBoxOutput("meter",width=3),
+      valueBoxOutput("correlation",width=3),
+      valueBoxOutput("ratio",width=3)
+    )),
     fluidRow(
-      tabBox(
+
+      tabBox(id="box",
         width = 8,
         height = "45em",
         title = tagList(shiny::icon("bar-chart-o")),
-        tabPanel("Audience and Critic Ratings",
+        tabPanel("I  Scattered Ratings",
                  plotlyOutput(outputId = "plot", height = "40em")),
-        tabPanel("20 Most Divisive Films",
-                 div(img(src = "gaps.png", height = 600, width = 400), style="text-align: center;")
-                 ),
-        tabPanel("Genre-wise Distribution of Ratings",
+        tabPanel("II  Genre-wise Distribution of Ratings",
                  div(img(src = "violin.png", height = 600, width = 600), style="text-align: center;")
+                 ),
+        tabPanel("III  20 Most Divisive Films",
+                 div(img(src = "gaps.png", height = 600, width = 400), style="text-align: center;")
         )
-        
+
 
     ),
       
       box(width = 4,
           tags$h4("Are film critics losing sync with audiences?",style = "padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;color:white;"),
           tags$h4("What kind of movies that are acclaimed by professional reviewers are yet not likely to be enjoyed by most moviegoers?",style = "color:white;padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;"),
-          tags$h4("Visulizations answer such questions strikingly.",style = "padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;color:white;")),
+          tags$h4("Visualizations answer such questions strikingly.",style = "padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;color:white;")),
 
       box(
         width = 4,
         height = "40em",
-        tags$style("intro {padding-left:0px;font-size:14px;line-height:1;margin-bottom:0px;}"),
-        HTML("<intro><b>Tab 1</b></intro>"),
+        tags$style("div{line-height:15px;}"),
+        tags$style("intro {padding-left:0px;font-size:14px;line-height:15px;margin-bottom:0px;}"),
+        tags$style("gold {padding-left:0px;font-size:14px;line-height:15px;margin-bottom:0px;color:gold}"),
+        HTML("<intro><b>Tab I</b></intro>"),
         tags$br(),
         tags$br(),
-        HTML("<intro><b>The bubble chart</b> displays the distribution of Rotten Tomatoes' critic ratings (a.k.a. <b>Tomatometers</b>) and audience ratings for more than 2000 popular films. Box-office revenue is represented by bubble size, and the color of a bubble indicates the primary genre of the film.</intro>"),
+        HTML("<intro>The bubble chart displays the distribution of Rotten Tomatoes' critic ratings (a.k.a. <gold>Tomatometers</gold>) and audience ratings for more than 2000 popular films. Box-office revenue is represented by bubble size, and the color of a bubble indicates the primary genre of the film.</intro>"),
         tags$br(),
         tags$br(),
-        HTML("<intro>Filter those movies, and you may find the Tomatometers covary with the audience scores in different manners (<b>the red line that fit the filtered data points best should be detached from the grey one</b>).</intro>"),
+        HTML("<intro>Filter those movies, and you may find the Tomatometers covary with the audience scores in different manners <gold>(the red line that fit the filtered data points the best should be detached from the grey one)</gold>.</intro>"),
         tags$br(),
         tags$br(),
-        HTML("<intro>The <b>average ratio of Tomatometer rating to audience rating</b> is used as a proxy for critic preference, which is reported in the box at the upper right corner.</intro>"),
+        HTML("<intro>The <gold>average ratio of Tomatometer rating to audience rating is used as a proxy for critic preference</gold>, which is reported in the box at the upper right corner.</intro>"),
         hr(),
-        HTML("<intro><b>Tab 2</b></intro>"),
+        HTML("<intro><b>Tab II</b></intro>"),
+        tags$br(),
+        tags$br(),
+        HTML("<intro>With violin plots, this chart illustrates the probablity distributions of both audience and critic ratings for movies of different genres. On the X axis, the genres are arrayed in descending order of critic preference.</intro>"),
+        hr(),
+        HTML("<intro><b>Tab III</b></intro>"),
         tags$br(),
         tags$br(),
         HTML("<intro>This chart displays the 20 movies with the greatest difference between Rotten Tomatoes' critic and audience ratings in the dataset. </intro>")
@@ -187,19 +199,27 @@ ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navba
   ),
   tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "style.css"))
   
-)
-),
+
+)),
 #############################End of 凌云帆's UI#################################
 tabPanel("2"),#new visualization layout here
-tabPanel("3"),#new visualization layout here
-tabPanel("4")#new visualization layout here
 )
 
 
 
 server<-function(input, output,session) {
   
-
+observe({
+  if((input$box!="I  Scattered Ratings")&(!input$sidebarCollapsed)){
+shinyjs::toggleClass(selector = "body", class = "sidebar-collapse")}
+  })
+  
+  observe({
+    if((input$box=="I  Scattered Ratings")&(input$sidebarCollapsed)){
+      shinyjs::toggleClass(selector = "body", class = "sidebar-collapse")}
+  })  
+  
+  
 observe({
   if((length(input$genres)!=0)|(length(input$movie)!=0)){
     updateRadioButtons(session, "genre", selected = "All Movies")
@@ -221,9 +241,9 @@ data= reactive({
 output$audience <- renderValueBox({
   valueBox(
     value = tags$p(round(mean(data()$audience_rating,na.rm=TRUE),2),style="font-size:38px;font-family: Century Gothic, fantasy;"),
-    subtitle = tags$p("Average Audience Rating",style="font-size:110%;font-family: Century Gothic, fantasy;"),
+    subtitle=HTML('<p style="font-size:100%;font-family: Century Gothic, fantasy;line-height:18px">Average<br>Audience Rating</p>'),
     icon =tags$i(class = "fa fa-thumbs-o-up", style = "color:white;padding-right=10px;") ,
-    width = 2,
+    width = 3,
     color = "maroon",
     href = NULL)
 })
@@ -231,9 +251,19 @@ output$audience <- renderValueBox({
 output$meter <- renderValueBox({
   valueBox(
     value = tags$p(round(mean(data()$tomatometer_rating,na.rm=TRUE),2),style="font-size:38px;font-family: Century Gothic, fantasy;"),
-    subtitle = tags$p("Average Tomatometer Rating",style="font-size:100%;font-family: Century Gothic, fantasy;"),
+    subtitle=HTML('<p style="font-size:110%;font-family: Century Gothic, fantasy;line-height:18px">Average<br>Tomatometer</p>'),
     icon =tags$i(class = "fa fa-star-o", style = "color:white;padding-right=10px;") ,
-    width = 2,
+    width = 3,
+    color = "maroon",
+    href = NULL)
+})
+
+output$correlation <- renderValueBox({
+  valueBox(
+    value = tags$p(round(cor(data()$tomatometer_rating,data()$audience_rating),2),style="font-size:38px;font-family: Century Gothic, fantasy;"),
+    subtitle=HTML('<p style="font-size:120%;font-family: Century Gothic, fantasy;line-height:18px">Correlation<br>Coefficient</p>'),    
+    icon =tags$i(class = "fa fa-line-chart", style = "color:white;padding-right=10px;") ,
+    width = 3,
     color = "maroon",
     href = NULL)
 })
@@ -245,9 +275,10 @@ white_value<-reactive({tags$p(scales::percent((mean(data()$crt_prf,na.rm=TRUE)))
 output$ratio <- renderValueBox({
     valueBox(
       value = if (nrow(data())==0){"NaN"} else if(mean(data()$crt_prf,na.rm=TRUE)>1) {love_value()} else {white_value()},
-      subtitle = tags$p("Critic Preference",style="font-size:130%;font-family: Century Gothic, fantasy;"),
+      subtitle = HTML('<p style="font-size:110%;font-family: Century Gothic, fantasy; line-height:20px">Critic Preference<br>
+                      <p style="font-size:80%;font-family: Century Gothic, fantasy;">Tomatometer / Audience Rating</p></p>'),
       icon =if (nrow(data())==0){white} else if(mean(data()$crt_prf,na.rm=TRUE)>1) {love} else {white},
-      width = 2,
+      width = 3,
       color = "maroon")
   })
   
