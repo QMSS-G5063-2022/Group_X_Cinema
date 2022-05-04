@@ -1,0 +1,13 @@
+name: critics-audience
+title: critics-audience
+username:
+account: supertrashpanda
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6108457
+bundleId: 5870328
+url: https://supertrashpanda.shinyapps.io/critics-audience/
+when: 1651685688.66211
+lastSyncTime: 1651685688.66212
+asMultiple: FALSE
+asStatic: FALSE
