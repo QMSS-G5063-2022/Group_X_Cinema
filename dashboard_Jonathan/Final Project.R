@@ -95,10 +95,10 @@ ui<-dashboardPage(
                 ),
 
                 fluidRow(
-                  valueBoxOutput("name", width = 3),
-                  valueBoxOutput("rating", width = 3),
+                  valueBoxOutput("name", width = 5),
+                  valueBoxOutput("rating", width = 2),
                   valueBoxOutput("sales", width = 3),
-                  valueBoxOutput("sentiment", width = 3)
+                  valueBoxOutput("sentiment", width = 2)
                 ),
                 
                 fluidRow(
@@ -228,7 +228,7 @@ ui<-dashboardPage(
                          ),
                          
                          tabPanel(title = "Sentiment Plot by Genre", 
-                                  plotOutput("genre", height = "40em",
+                                  plotlyOutput("genre", height = "40em",
                                              width = "100%")
                          )
                          
@@ -320,32 +320,37 @@ server<-function(input, output,session) {
     return(sentiment_df)
   })
   
-  big_value<-reactive({tags$p(input$name,style="font-size:38px;")})
-  middle_value<-reactive({tags$p(input$name,style="font-size:23px;line-height: 45px")})
-  small_value<-reactive({tags$p(input$name,style="font-size:17px;line-height: 45px;overflow:hidden")})
+  big_value<-reactive({tags$p(input$name,style="font-size:35px;")})
+  middle_value<-reactive({tags$p(input$name,style="font-size:70%;line-height: 45px")})
+  small_value<-reactive({tags$p(input$name,style="font-size:60%;line-height: 45px;overflow:hidden")})
+  smallest_value <- reactive({tags$p(input$name,style="font-size:40%;line-height: 45px;overflow:hidden")})
   
   output$name <- renderValueBox({
     valueBox(value = if(nchar(input$name)<=10){big_value()} 
              else if(nchar(input$name)<=20){middle_value()} 
-             else {small_value()},
-             subtitle = ("Movie Title"), icon = icon("film") ,
+             else if (nchar(input$name)<=35){small_value()}
+             else {smallest_value()},
+             subtitle = ("Movie Title"), 
+             icon = icon("film"),
              color = "maroon", href = NULL)
   })
   
   output$rating <- renderValueBox({
-    valueBox(value = movie()$rating, subtitle = ("IMDB rating"), icon = icon("star") ,
+    valueBox(value = tags$p(movie()$rating, style="font-size:80%;line-height: 45px"), 
+             subtitle = tags$p("IMDB rating", style = "font-size: 90%;"), icon = icon("star") ,
              color = "light-blue", href = NULL)
   })
   
   output$sales <- renderValueBox({
-    valueBox(value = scales::dollar(round(as.numeric(gsub(",", "",movie()$gross)),2)), 
+    valueBox(value = tags$p(scales::dollar(round(as.numeric(gsub(",", "",movie()$gross)),2)),
+                            style="font-size:70%;line-height: 45px;overflow:hidden"), 
              subtitle = ("Box Office"), icon = icon("dollar-sign"),
              color = "purple", href = NULL)
   })
   
   output$sentiment <- renderValueBox({
-    valueBox(value = round(movie()$sentiment,2), 
-             subtitle = tags$p(HTML(paste0('Sentiment Score',':',br(),'Based on the Hu&Liu Dictionary')), style = "font-size: 80%;"),
+    valueBox(value = tags$p(round(movie()$sentiment,2), style="font-size:80%;line-height: 45px"), 
+             subtitle = tags$p(HTML(paste0('Sentiment Score',br(),'(Hu&Liu Dictionary)')), style = "font-size: 80%;"),
              icon = icon("smile"), color = "teal", href = NULL)
   })
   
@@ -488,7 +493,7 @@ server<-function(input, output,session) {
       xlim(input$percentage[1], input$percentage[2])
   })
   
-  output$genre = renderPlot({
+  output$genre = renderPlotly({
     df = movie_df %>%
       select(name, genre1) %>%
       left_join(sentiment_line, by = "name") %>%
@@ -501,18 +506,18 @@ server<-function(input, output,session) {
       pivot_longer(cols = -time) %>%
       mutate(value = as.numeric(value))
     
-    ggplot(df, aes(x=time, y=value, group=name, color=name)) +
-      geom_line(size=1) +
+    ggplotly(ggplot(df, aes(x=time, y=value, color=name)) +
+      geom_line(size=0.6) +
       ggtitle("Sentiment Score Visualization by Genre") +
       ylab("Sentiment Score") + 
       xlab("Percentage of the Script")+
       theme_minimal() +
       labs(color="Title")+
-      theme(title = element_text(size = 15, face = "bold", color = "white"),
-            axis.text=element_text(face = "bold", color = "white",size=12),
+      theme(title = element_text(size = 10, face = "bold", color = "white"),
+            axis.text=element_text(face = "bold", color = "white",size=8),
             axis.title=element_text(face = "bold", color = "white"),
-            legend.text=element_text(face = "bold", color = "white",size=12),
-            plot.subtitle = element_text(size=7, face = "bold", color = "white"),
+            legend.text=element_text(face = "bold", color = "white",size=8),
+            plot.subtitle = element_text(size=5, face = "bold", color = "white"),
             axis.line = element_line(colour = "white"),
             panel.grid.major = element_blank(), 
             panel.grid.minor = element_blank(),
@@ -520,7 +525,7 @@ server<-function(input, output,session) {
                                             colour = "#343E48",
                                             size = 0.5, linetype = "solid"),
             plot.background = element_rect(fill = "#343E48")) +
-      xlim(input$percentage[1], input$percentage[2])
+      xlim(input$percentage[1], input$percentage[2]))
   })
   
   output$plotly_plot = renderPlotly({
