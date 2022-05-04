@@ -62,7 +62,7 @@ ui<-dashboardPage(
       sidebarMenu(
         menuItem("Single Movie", tabName = "single", icon = icon("th")),
         menuItem("Comparing Movies", tabName = "double", icon = icon("th")),
-        menuItem("Sentiment vs. Rating Difference", tabName = "triple", icon = icon("th"))
+        menuItem("Sentiment vs. Critic Preference", tabName = "triple", icon = icon("th"))
       )
     ),
     
@@ -166,12 +166,12 @@ ui<-dashboardPage(
                   
                   
                   tabBox(width = 9,
-                         tabPanel(title = "Sentiment Plot",
+                         tabPanel(title = "Compare Sentiment of Two Movies",
                                   plotOutput("sentimentplot", height = "40em",
                                              width = "100%")
                          ),
                          
-                         tabPanel(title = "Genre", 
+                         tabPanel(title = "Sentiment Plot by Genre", 
                                   plotOutput("genre", height = "40em",
                                              width = "100%")
                          )
@@ -183,7 +183,7 @@ ui<-dashboardPage(
         tabItem(tabName = "triple",
                 fluidRow(
                   box(
-                    title = "Rating Difference vs. Sentiment Score",
+                    title = "Critic Preference vs. Sentiment Score",
                     width = 12,
                     height = "60em",
                     plotlyOutput("plotly_plot")
@@ -225,9 +225,16 @@ server<-function(input, output,session) {
     return(sentiment_df)
   })
   
+  big_value<-reactive({tags$p(input$name,style="font-size:38px;")})
+  middle_value<-reactive({tags$p(input$name,style="font-size:23px;line-height: 45px")})
+  small_value<-reactive({tags$p(input$name,style="font-size:17px;line-height: 45px;overflow:hidden")})
+  
   output$name <- renderValueBox({
-    valueBox(value = movie()$name, subtitle = ("Name of the Movie"), icon = icon("film") ,
-      color = "maroon", href = NULL)
+    valueBox(value = if(nchar(input$name)<=10){big_value()} 
+             else if(nchar(input$name)<=20){middle_value()} 
+             else {small_value()},
+             subtitle = ("Name of the Movie"), icon = icon("film") ,
+             color = "maroon", href = NULL)
   })
   
   output$rating <- renderValueBox({
@@ -319,10 +326,11 @@ server<-function(input, output,session) {
     word_count() %>% slice_max(count, n = 15) %>%
     ggplot(., aes(x = reorder(term, count), y = count)) +
       geom_bar(stat='identity', width=0.8, alpha=0.6, fill = "slategray") +
+      geom_text(aes(label=count),stat="identity",color="white", hjust=1.2, size=5.5) +
       labs(x = "Term", y = "Frequency",
-           title = paste0("The Top 15 most frequent words in the movie ", input$name)) +
+           title = paste0("The Top 15 most frequent words in the movie \n", input$name)) +
       theme_minimal()+
-      theme(axis.text=element_text(size=8, face = "bold", color = "white"),
+      theme(axis.text=element_text(size=13, face = "bold", color = "white"),
             title = element_text(size = 15, face = "bold", color = "white"),
             axis.title=element_text(face = "bold", color = "white"),
             plot.subtitle = element_text(size=7, face = "bold", color = "white"),
@@ -418,22 +426,22 @@ server<-function(input, output,session) {
   })
   
   output$plotly_plot = renderPlotly({
-    plot_ly(plotly_data, x=~ratingdiff, y=~sentiment, size=~gross, color=~gross,
-            type="scatter", sizes=c(10,500),
+    plot_ly(plotly_data, x=~criticpreference, y=~sentiment, size=~gross, color=~Genre,
+            type="scatter", sizes=c(50,800),
             markers=list(opacity=0.7),
             hoverinfo="text",
             hovertext=paste("Movie:",plotly_data$name, "<br> Sentiment:",plotly_data$sentiment,
-                            "<br> Difference in Critic vs. Audience Rating:", plotly_data$ratingdiff,
-                            "<br> Box Office (M):", plotly_data$gross)) %>%
-      layout(xaxis = list(title="Difference in Critics vs. Audience Ratings", color = '#ffffff'),
-             yaxis = list(title="Sentiment Score", color = '#ffffff'),
-             title = list(text = 'Critic difference vs. Sentiment Score', font = list(color = "white")),
+                            "<br> Critic Preference:", plotly_data$criticpreference,
+                            "<br> Box Office (M):", plotly_data$gross,
+                            "<br> Genre:",plotly_data$Genre)) %>%
+      layout(xaxis = list(title="Critic Preference (Critic rating/ Audience rating)", color = '#ffffff',showgrid=FALSE),
+             yaxis = list(title="Sentiment Score", color = '#ffffff',showgrid=FALSE, zeroline=FALSE),
+             title = list(text = 'Critic Preference vs. Sentiment Score', font = list(color = "white")),
+             legend = list(title="Genre", font = list(color = "white")),
              margin = 10,
              height = 600,
              paper_bgcolor='#343E48',
-             plot_bgcolor='#343E48') %>% 
-      hide_colorbar()
-      
+             plot_bgcolor='#343E48')
   })
   
   
