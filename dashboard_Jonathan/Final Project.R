@@ -51,7 +51,7 @@ get_frequency = function(df){
 
 ######UI start
 ui<-dashboardPage(
-    dashboardHeader(title =span("Critics VS. Audience",style="font-size:20px;")),
+    dashboardHeader(title =span("Script Sentiment Analysis",style="font-size:18px;")),
     dashboardSidebar(
       collapsed = FALSE,
       chooseSliderSkin("Flat"),
@@ -60,9 +60,9 @@ ui<-dashboardPage(
       ),
       
       sidebarMenu(
-        menuItem("Single Movie", tabName = "single", icon = icon("th")),
+        menuItem("Single Movie", tabName = "single", icon = icon("film")),
         menuItem("Comparing Movies", tabName = "double", icon = icon("th")),
-        menuItem("Sentiment vs. Critic Preference", tabName = "triple", icon = icon("th"))
+        menuItem("Sentiment vs. Critic Preference", tabName = "triple", icon = icon("theater-masks"))
       )
     ),
     
@@ -76,6 +76,25 @@ ui<-dashboardPage(
         tabItem(tabName = "single",
                 
                 fluidRow(
+                  box(width = 12,
+                      strong("Overview", style = "font-family: 'Arial'; font-size: 25px;"),
+                      p("As human beings, we show great empathy to individuals who 
+                        have undergone sorrows that are similar to ours and have strong feelings 
+                        towards events that echo our own life experiences. Hence, there may be some systematic 
+                        differences between professional and non-professional audiences in terms of previous 
+                        experiences that further impact how they respond to certain emotions and how they perceive a given movie."),
+                      p("Twists and turns, ups and downs, despair and exhilaration can all be recorded and 
+                        reflected in movie scripts. We, therefore, scraped a total of 46 best-rated movies 
+                        in IMDB and compare their critic preference score based on different genres."),
+                      p("Tab 1 provides information on the title, rating, box office, and average script's 
+                        sentiment score, a word cloud based on scripts as well as a word frequency bar chart 
+                        of a certain movie. Tab 2 allows us to compare the info in pairs. Tab 3 utilizes 
+                        a bubble chart to demonstrate the relationship between the overall sentiment scores 
+                        and the critic preference ratio.")
+                  )
+                ),
+
+                fluidRow(
                   valueBoxOutput("name", width = 3),
                   valueBoxOutput("rating", width = 3),
                   valueBoxOutput("sales", width = 3),
@@ -84,16 +103,19 @@ ui<-dashboardPage(
                 
                 fluidRow(
                   box(
-                    title = "Controls",
+                    title = tags$p("Controls", style = "font-size: 130%; font-weight: bold"),
                     width = 3,
                     height = "44.5em",
                     
+                    p("The drop-down menu includes 46 available movie scripts from imsdb.com. 
+                    The movies are selected from the IMDB Top 250 chart.
+                      "),
+                    br(),
                     selectInput("name",
                                 "Choose the Movie:",
                                 choices = unique(movie_df$name)
                                 
                     )
-                    
                   ),
                   
                   tabBox(width = 6,
@@ -111,13 +133,44 @@ ui<-dashboardPage(
                   
                   box(width = 3,
                       height = "44.5em",
-                      tags$h4("There are some text input")
+                      strong("Tab 1", style = "font-family: 'Arial'; font-size: 25px;"),
+                      br(),
+                      strong("Wordcloud & Frequency Plot", style = "font-family: 'Arial'; font-size: 20px;"),
+                      br(),
+                      br(),
+                      p("(You may choose your interested movie from the drop-down menu located on the left-hand side of the screen.)"),
+                      br(),
+                      p("This tab takes a peek at the scripts by drawing wordclouds and word 
+                      frequency bar charts. The most commonly seen word are highlighted using 
+                      a salient color. The character names are not stripped from the original 
+                        script. Therefore the high-lighted word in the center of the wordcloud 
+                        can also be interpreted as the character with the most lines of words in 
+                        the original movie script.",
+                        style = "font-family: 'Arial'; font-size: 15px;")
                   )
                 )
    
         ),
         
         tabItem(tabName = "double",
+                
+                fluidRow(
+                  box(width = 12,
+                      strong("Tab 2 Sentiment Arc Analysis", style = "font-size: 25px; font-weight: bold;"),
+                      p("This tab examines in more detail the emotions expressed in scripts using two sub-tabs."),
+                      p("Compare Sentiments of Two Movies", style = "text-decoration: underline;"),
+                      p("The line chart displays how the sentiment expressed by the scripts changes as the movie 
+                        progresses to the end. The y-axis is the calculated sentiment score, and the x-axis denotes 
+                        the percentage of the script. You can play this interactive application by choosing your 
+                        favorite movies from the drop-down menu and see the dynamic flows of sentiments implicated 
+                        in the movie conversations."),
+                      p("Sentiment Plot by Genre", style = "text-decoration: underline;"),
+                      p("This line chart computes the sentiment scores and compares the differences among distinct 
+                        movies belonging to the same genre. The y-axis is the calculated sentiment score, and the 
+                        x-axis is the percentage of the script. You can manually select your favorite genre from the drop-down menu.")
+                  )
+                ),
+                
                 fluidRow(
                   tags$head(tags$style(HTML(".small-box {height: 100px}"))),
                   valueBoxOutput("moviename1", width = 6),
@@ -133,7 +186,7 @@ ui<-dashboardPage(
                 
                 fluidRow(
                   box(
-                    title = "Controls",
+                    title = tags$p("Controls", style = "font-size: 130%; font-weight: bold"),
                     width = 3,
                     height = "44.5em",
                     
@@ -151,10 +204,13 @@ ui<-dashboardPage(
                     
                     sliderTextInput(
                       inputId = "percentage",
-                      label = "Choose a percentile range:", 
+                      label = "Choose a Percentile Range:", 
                       choices = seq(0,1,0.05),
                       selected = c(0, 1.0)
                     ),
+                    
+                    p("The percentile range indicates the percentage of movie scripts analyzed in the graph"),
+                    p("(0 indicates 0% and 1 indicates 100%)"),
 
                     selectInput("genre1",
                                 "Choose a genre:",
@@ -181,19 +237,58 @@ ui<-dashboardPage(
         ),
         
         tabItem(tabName = "triple",
+                
+                fluidRow(
+                  box(width = 12,
+                      strong("Tab 3 Sentiment Score vs. Critic Preference Ratio", style = "font-size: 25px; font-weight: bold;"),
+                      p("This tab aims to investigate how might movie scripts' emotions shape critics' 
+                        and audiences' views on movies. The x-axis is the critic preference score using 
+                        data from RottenTomatoes and the y-axis is the average sentiment score of each movie."),
+                      p("Based on our graph, we can see that there is no detectable linear relationship between 
+                        sentiments and critic preference. Movies' genres also seem to be uncorrelated with the 
+                        taste divergence between professionals and non-professionals.")
+                  )
+                ),
+                
                 fluidRow(
                   box(
-                    title = "Critic Preference vs. Sentiment Score",
+                    title = tags$p("Sentiment Score vs. Critic Preference Ratio", style = "font-size: 130%; font-weight: bold"),
                     width = 12,
-                    height = "60em",
+                    height = "50em",
                     plotlyOutput("plotly_plot")
                   )
-                )
+                ),
+                
+                fluidRow(
+                  box(width = 12,
+                      strong("Conclusions and Discussions", style = "font-size: 25px; font-weight: bold;"),
+                      p("We aim to disentangle the commonly seen divergence between the taste differences 
+                        between movie critics and ordinary audiences. We deploy a RottenTomatoes dataset 
+                        containing approx. 2,000 popular movies from 1925 to 2017, a self-constructed 
+                        movie script dataset scraped from the Internet. We also developed a key metric-- 
+                        the critic preference score-- to measure the extent to which a given movie is 
+                        loved by critics but not so much by audiences. This metric is calculated as the 
+                        critic score divided by the audience score."),
+                      p("Here are our major findings:"),
+                      strong("(1) There is no doubt that good movies are good, and bad movies are bad."),
+                      p("The correlation coefficients between critic scores and audience scores are 
+                        always positive and remain high during the 92-year time span, which means 
+                        professional and non-professionals constantly share the same opinion about a movie."),
+                      strong("(2) Arthouse and romantic movies see the most disagreements."),
+                      p("Arthouse & International, Animation, and Kids & Families are more preferred by critics, 
+                        whistle Romance is more enjoyed by the audience. Plots, CGI, artistic style, and 
+                        storyline tempo contribute most to their debates."),
+                      strong("(3) Sentiments mined through scripts are not associated with the taste difference."),
+                      p("There is no discernable correlation between the preference divergence between movie 
+                        dialogues' texts and the rating distinction.")
+                  )
+                ),
         )
         
       )
     )
 )
+
 
 
 ####end UI
@@ -233,7 +328,7 @@ server<-function(input, output,session) {
     valueBox(value = if(nchar(input$name)<=10){big_value()} 
              else if(nchar(input$name)<=20){middle_value()} 
              else {small_value()},
-             subtitle = ("Name of the Movie"), icon = icon("film") ,
+             subtitle = ("Movie Title"), icon = icon("film") ,
              color = "maroon", href = NULL)
   })
   
@@ -243,14 +338,17 @@ server<-function(input, output,session) {
   })
   
   output$sales <- renderValueBox({
-    valueBox(value = scales::dollar(round(as.numeric(gsub(",", "",movie()$gross)),2)), subtitle = ("Box Office"), icon = icon("dollar-sign"),
+    valueBox(value = scales::dollar(round(as.numeric(gsub(",", "",movie()$gross)),2)), 
+             subtitle = ("Box Office"), icon = icon("dollar-sign"),
              color = "purple", href = NULL)
   })
   
   output$sentiment <- renderValueBox({
-    valueBox(value = round(movie()$sentiment,2), subtitle = ("Sentiment Score"), icon = icon("smile"),
-             color = "teal", href = NULL)
+    valueBox(value = round(movie()$sentiment,2), 
+             subtitle = tags$p(HTML(paste0('Sentiment Score',':',br(),'Based on the Hu&Liu Dictionary')), style = "font-size: 80%;"),
+             icon = icon("smile"), color = "teal", href = NULL)
   })
+  
   
   
   # Second Page reactive functions
