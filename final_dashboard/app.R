@@ -244,7 +244,9 @@ ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navba
 
 )),
 #############################End of YF's UI#################################
-tabPanel("Script Sentiment Analysis",#new visualization layout here
+
+#############################Tab 2#################################
+tabPanel("Script Sentiment Analysis", #new visualization layout here
 dashboardPage(
   
   ####tab one starts
@@ -466,6 +468,7 @@ dashboardPage(
               )
               
       ),
+     
      tabItem(tabName = "quadruple",
              fluidRow(
                box(width = 12,
@@ -492,12 +495,70 @@ dashboardPage(
                    p("There is no discernable correlation between the preference divergence between movie 
                         dialogues' texts and the rating distinction.",style="line-height:18px;")
                )
-             )#end of fluidRow
-             )#end of tabitem
-    )#end of tabitems
+             ) #end of fluidRow
+             ) #end of tabitem
+    ) #end of tabitems
       
-    )#end of dashboardBody
-  )#end of dashboardpage
+    ) #end of dashboardBody
+  ) #end of dashboardpage
+),
+
+tabPanel("Discussion & Conclusion",#new visualization layout here
+         dashboardPage(
+           ####tab one starts
+           dashboardHeader(title =span("Discussion & Conclusion",style="font-size:16px;font-family: Century Gothic, fantasy;")),
+           dashboardSidebar(
+             collapsed = FALSE,
+             chooseSliderSkin("Flat"),
+             tags$head(
+               tags$style(HTML(".selectize-input {height:10px;padding-top: 0px;}"))
+             ),
+             
+             sidebarMenu(
+               menuItem("Discussion & Conclusion", tabName = "conclusion", icon = icon("file-signature")),
+               menuItem("Author", tabName = "author", icon = icon("file-signature"))
+               
+             )
+           ),
+           
+           dashboardBody(
+             shinyDashboardThemes(
+               theme = "grey_dark"
+             ),
+             
+             tabItems(
+               # Conclusion tab content
+               tabItem(tabName = "conclusion",
+                       fluidRow(
+                         box(width = 12,
+                             strong("Conclusions and Discussions", style = "font-size: 25px; font-weight: bold;"),
+                             br(),
+                             br(),
+                             p("We aim to disentangle the commonly seen divergence between the taste differences 
+                        between movie critics and ordinary audiences. We deploy a RottenTomatoes dataset 
+                        containing approx. 2,000 popular movies from 1925 to 2017, a self-constructed 
+                        movie script dataset scraped from the Internet. We also developed a key metric-- 
+                        the critic preference score-- to measure the extent to which a given movie is 
+                        loved by critics but not so much by audiences. This metric is calculated as the 
+                        critic score divided by the audience score.",style="line-height:18px;"),
+                             p("Here are our major findings:",style="line-height:18px;"),
+                             strong("(1) There is no doubt that good movies are good, and bad movies are bad."),
+                             p("The correlation coefficients between critic scores and audience scores are 
+                        always positive and remain high during the 92-year time span, which means 
+                        professional and non-professionals constantly share the same opinion about a movie.",style="line-height:18px;"),
+                             strong("(2) Arthouse and romantic movies see the most disagreements.",style="line-height:18px;"),
+                             p("Arthouse & International, Animation, and Kids & Families are more preferred by critics, 
+                        whistle Romance is more enjoyed by the audience. Plots, CGI, artistic style, and 
+                        storyline tempo contribute most to their debates.",style="line-height:18px;"),
+                             strong("(3) Sentiments mined through scripts are not associated with the taste difference."),
+                             p("There is no discernable correlation between the preference divergence between movie 
+                        dialogues' texts and the rating distinction.",style="line-height:18px;")
+                         )
+                       )
+               )
+             )
+           )
+         )
 )#end of tabPanel
 
 )
