@@ -88,12 +88,11 @@ beta<-coef(regression)[2]
 ticks<-seq(1925,2010,10)
 
 
-ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navbar-static-top {margin-bottom:0px;padding-bottom:0px;}")),
+ui<-navbarPage(span("Movie Facts",style="font-weight:bold;text-align:center;"),  #tags$style(HTML(".navbar .navbar-default .navbar-static-top {margin-bottom:0px;padding-bottom:0px;}")),
                tags$head(tags$style(HTML('* {font-family: "Tahoma"};'))),
                tags$head(tags$style(".option{color: white;}")),
-               
-
-
+               tags$head(tags$style(".selectize-input{height:200px;padding-top: 0px;}")),
+              
                tabPanel("Critics VS. Audience",
                         #tags$style(HTML(".tabbable > .nav > li > a {margin:0px;padding:0px;}")),
                dashboardPage(
@@ -103,10 +102,7 @@ ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navba
   dashboardSidebar(
     collapsed = FALSE,
     chooseSliderSkin("Flat"),
-    tags$head(
-      tags$style(HTML(".selectize-input {height:10px;padding-top: 0px;}"))
-    ),
- 
+
     selectizeInput(
       inputId = "movie", 
       label =tags$span("You may search for a particular movie:",style = "padding-left:0px;font-weight: bold;font-size:13px;margin-bottom:0px;"),
@@ -204,9 +200,10 @@ ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navba
     ),
       
       box(width = 4,
-          tags$h4("Are film critics losing sync with audiences?",style = "padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;color:white;"),
-          tags$h4("What kind of movies that are acclaimed by professional reviewers are yet not likely to be enjoyed by most moviegoers?",style = "color:white;padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;"),
-          tags$h4("Visualizations answer such questions strikingly.",style = "padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;color:white;")),
+          strong("Overview",style = "padding-left:3px;margin-bottom:0px;color:white;font-size:16px;"),
+          tags$h4("Are film critics losing sync with audiences?",style = "padding-left:3px;margin-bottom:0px;color:white;font-size:16px;"),
+          tags$h4("What kind of movies that are acclaimed by professional reviewers are yet not likely to be enjoyed by most moviegoers?",style = "color:white;padding-left:3px;margin-bottom:0px;font-size:16px;"),
+          tags$h4("Visualizations answer such questions strikingly.",style = "padding-left:3px;margin-bottom:0px;color:white;font-size:16px")),
 
       box(
         width = 4,
@@ -214,7 +211,7 @@ ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navba
         tags$style("div{line-height:15px;}"),
         tags$style("intro {padding-left:0px;font-size:14px;line-height:15px;margin-bottom:0px;}"),
         tags$style("gold {padding-left:0px;font-size:14px;line-height:15px;margin-bottom:0px;color:gold}"),
-        HTML("<intro><b>Tab I</b></intro>"),
+        HTML("<intro><b>Tab I. Scatter Ratings</b></intro>"),
         tags$br(),
         tags$br(),
         HTML("<intro>The bubble chart displays the distribution of Rotten Tomatoes' critic ratings (a.k.a. <gold>Tomatometers</gold>) and audience ratings for more than 2000 popular films. Box-office revenue is represented by bubble size, and the color of a bubble indicates the primary genre of the film.</intro>"),
@@ -225,12 +222,12 @@ ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navba
         tags$br(),
         HTML("<intro>The <gold>average ratio of Tomatometer rating to audience rating is used as a proxy for critic preference</gold>, which is reported in the box at the upper right corner.</intro>"),
         hr(),
-        HTML("<intro><b>Tab II</b></intro>"),
+        HTML("<intro><b>Tab II. Genre-wise Distribution of Ratings</b></intro>"),
         tags$br(),
         tags$br(),
         HTML("<intro>With violin plots, this chart illustrates the probablity distributions of both audience and critic ratings for movies of different genres. On the X axis, the genres are arrayed in descending order of critic preference.</intro>"),
         hr(),
-        HTML("<intro><b>Tab III</b></intro>"),
+        HTML("<intro><b>Tab III. 20 Most Devisive Films</b></intro>"),
         tags$br(),
         tags$br(),
         HTML("<intro>This chart displays the 20 movies with the greatest difference between Rotten Tomatoes' critic and audience ratings in the dataset. </intro>")
@@ -261,9 +258,7 @@ dashboardPage(
     sidebarMenu(
       menuItem("Wordcloud & Term Frequency", tabName = "single", icon = icon("film")),
       menuItem("Sentiment Arc Analysis", tabName = "double", icon = icon("th")),
-      menuItem("Sentiment & Critic Preference", tabName = "triple", icon = icon("theater-masks")),
-      menuItem("Discussion & Conclusion", tabName = "quadruple", icon = icon("file-signature"))
-      
+      menuItem("Sentiment & Critic Preference", tabName = "triple", icon = icon("theater-masks"))
     )
   ),
   
@@ -467,46 +462,16 @@ dashboardPage(
                 )
               )
               
-      ),
-     
-     tabItem(tabName = "quadruple",
-             fluidRow(
-               box(width = 12,
-                   strong("Conclusions and Discussions", style = "font-size: 25px; font-weight: bold;"),
-                   br(),
-                   br(),
-                   p("We aim to disentangle the commonly seen divergence between the taste differences 
-                        between movie critics and ordinary audiences. We deploy a RottenTomatoes dataset 
-                        containing approx. 2,000 popular movies from 1925 to 2017, a self-constructed 
-                        movie script dataset scraped from the Internet. We also developed a key metric-- 
-                        the critic preference score-- to measure the extent to which a given movie is 
-                        loved by critics but not so much by audiences. This metric is calculated as the 
-                        critic score divided by the audience score.",style="line-height:18px;"),
-                   p("Here are our major findings:",style="line-height:18px;"),
-                   strong("(1) There is no doubt that good movies are good, and bad movies are bad."),
-                   p("The correlation coefficients between critic scores and audience scores are 
-                        always positive and remain high during the 92-year time span, which means 
-                        professional and non-professionals constantly share the same opinion about a movie.",style="line-height:18px;"),
-                   strong("(2) Arthouse and romantic movies see the most disagreements.",style="line-height:18px;"),
-                   p("Arthouse & International, Animation, and Kids & Families are more preferred by critics, 
-                        whistle Romance is more enjoyed by the audience. Plots, CGI, artistic style, and 
-                        storyline tempo contribute most to their debates.",style="line-height:18px;"),
-                   strong("(3) Sentiments mined through scripts are not associated with the taste difference."),
-                   p("There is no discernable correlation between the preference divergence between movie 
-                        dialogues' texts and the rating distinction.",style="line-height:18px;")
-               )
-             ) #end of fluidRow
-             ) #end of tabitem
+      )
     ) #end of tabitems
       
     ) #end of dashboardBody
   ) #end of dashboardpage
-),
+), 
 
-tabPanel("Discussion & Conclusion",#new visualization layout here
+tabPanel("Read More",#new visualization layout here
          dashboardPage(
-           ####tab one starts
-           dashboardHeader(title =span("Discussion & Conclusion",style="font-size:16px;font-family: Century Gothic, fantasy;")),
+           dashboardHeader(title=span("Read More", style="font-size:20px;font-family: Century Gothic, fantasy;")),
            dashboardSidebar(
              collapsed = FALSE,
              chooseSliderSkin("Flat"),
@@ -514,9 +479,9 @@ tabPanel("Discussion & Conclusion",#new visualization layout here
                tags$style(HTML(".selectize-input {height:10px;padding-top: 0px;}"))
              ),
              
-             sidebarMenu(
+             sidebarMenu(id="must",
                menuItem("Discussion & Conclusion", tabName = "conclusion", icon = icon("file-signature")),
-               menuItem("Author", tabName = "author", icon = icon("file-signature"))
+               menuItem("About the Team", tabName = "author", icon = icon("user-secret"))
                
              )
            ),
@@ -534,28 +499,24 @@ tabPanel("Discussion & Conclusion",#new visualization layout here
                              strong("Conclusions and Discussions", style = "font-size: 25px; font-weight: bold;"),
                              br(),
                              br(),
-                             p("We aim to disentangle the commonly seen divergence between the taste differences 
-                        between movie critics and ordinary audiences. We deploy a RottenTomatoes dataset 
-                        containing approx. 2,000 popular movies from 1925 to 2017, a self-constructed 
-                        movie script dataset scraped from the Internet. We also developed a key metric-- 
-                        the critic preference score-- to measure the extent to which a given movie is 
-                        loved by critics but not so much by audiences. This metric is calculated as the 
-                        critic score divided by the audience score.",style="line-height:18px;"),
-                             p("Here are our major findings:",style="line-height:18px;"),
-                             strong("(1) There is no doubt that good movies are good, and bad movies are bad."),
-                             p("The correlation coefficients between critic scores and audience scores are 
-                        always positive and remain high during the 92-year time span, which means 
-                        professional and non-professionals constantly share the same opinion about a movie.",style="line-height:18px;"),
-                             strong("(2) Arthouse and romantic movies see the most disagreements.",style="line-height:18px;"),
-                             p("Arthouse & International, Animation, and Kids & Families are more preferred by critics, 
-                        whistle Romance is more enjoyed by the audience. Plots, CGI, artistic style, and 
-                        storyline tempo contribute most to their debates.",style="line-height:18px;"),
-                             strong("(3) Sentiments mined through scripts are not associated with the taste difference."),
-                             p("There is no discernable correlation between the preference divergence between movie 
-                        dialogues' texts and the rating distinction.",style="line-height:18px;")
+                             p("We aim to disentangle and analyze the massive divergence of taste 
+                        between film critics and common movie-goers. To begin with, we acquire and utilize a RottenTomatoes dataset 
+                        containing approx. 2,000 most-reviewed movies, and 46 movie scripts scraped from the Internet. We also construct a key indicator—— 
+                        the critic preference score——to measure how much a movie is better received by the critics than the audiences. This metric is the ratio of the audience rating to the critic rating (tomatometer).",style="line-height:18px;"),
+                             p("Here are several key findings of our analysis:",style="line-height:18px;"),
+                             strong("(1) Good movies are generally considered good, and bad movies are generally considered bad."),
+                             p("The correlation between the critic scores and audience scores is significantly positive, which suggests that 
+                        professional reviewers and average movie enjoyers genearlly coincide in their opinions towards a movie.",style="line-height:18px;"),
+                             strong("(2) Art house and romantic films cause the greatest disaccords.",style="line-height:18px;"),
+                             p("Arthouse & International, Animation, and Kids & Families are strongly preferred by critics, 
+                        while Romance is more received by common audience. Plots, CGI, artistic style, and 
+                        storyline tempo are ikely to  contribute to such divergences.",style="line-height:18px;"),
+                             strong("(3) Sentiment doesn't matter."),
+                             p("There is no discernable association of critic preference with positive or negative sentiment perceived in a movie's script.",style="line-height:18px;")
                          )
                        )
-               )
+               ),
+               tabItem(tabName="author","dafdsfasdfadsfasddfasd")
              )
            )
          )
@@ -590,6 +551,11 @@ observe({
 })
 
 ##################server of Jianing's Dashboard starts
+
+observe({if(!input$must%in%c("conclusion","author")){
+  updateTabItems(session, "must", selected = "conclusion")}
+})
+
 movie = reactive({
   df = movie_df %>%
     filter(name == input$name)
