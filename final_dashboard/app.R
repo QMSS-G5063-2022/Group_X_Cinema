@@ -516,7 +516,21 @@ tabPanel("Read More",#new visualization layout here
                          )
                        )
                ),
-               tabItem(tabName="author","dafdsfasdfadsfasddfasd")
+
+               tabItem(tabName="author",
+                       div(img(src = "team.png",width = 650), style="text-align: center;padding-top:50px;padding-bottom:30px"),
+                       box(width=12,
+                           HTML('<p style="font-size:16px;line-height:20px;"><b>Zhiqing Li</b> is about to graduate from Columbia University, Master of Arts in Quantitative Methods in the Social Science program (Data Science Focus) in May 2022. She is dedicated to business analytics in financial industries and marketing science. She can be reached at Zhiqing.li@columbia.edu.</p>'),
+                           br(),
+                           HTML('<p style="font-size:16px;line-height:20px;"><b>Yunfan Ling</b> is pursuing a master’s degree of Columbia University’s Quantitative Methods in the Scocial Sciences Program (Data Science Focus). He currently works as a department research assistant. He is enthusiastic about creating useless digital interactive arts and he would love to collaborate with anyone who is also interested. He can be reached at yl4811@columbia.edu.</p>'),
+                           br(),
+                           HTML('<p style="font-size:16px;line-height:20px;"><b>Jonathan Wang</b>, a student, a data scientist, an auditor, a music producer, an illustrator, and an adventurer.</p>'),
+                           br(),
+                           HTML('<p style="font-size:16px;line-height:20px;"><b>Stacey Zuo</b> is pursuing a Master’s degree in Quantitative Methods in the Social Sciences program at Columbia University. Before she came to QMSS, she graduated from Wesleyan University with a major in Psychology in 2021. She is dedicated to data analytics in marketing & advertising. She can be reached at mz2875@columbia.edu.</p>')
+
+                           
+                           ))
+
              )
            )
          )
