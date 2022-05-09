@@ -516,6 +516,7 @@ tabPanel("Read More",#new visualization layout here
                          )
                        )
                ),
+
                tabItem(tabName="author",
                        div(img(src = "team.png",width = 650), style="text-align: center;padding-top:50px;padding-bottom:30px"),
                        box(width=12,
@@ -529,6 +530,7 @@ tabPanel("Read More",#new visualization layout here
 
                            
                            ))
+
              )
            )
          )
