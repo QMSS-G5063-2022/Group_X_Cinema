@@ -88,9 +88,11 @@ beta<-coef(regression)[2]
 ticks<-seq(1925,2010,10)
 
 
-ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navbar-static-top {margin-bottom:0px;padding-bottom:0px;}")),
-
-
+ui<-navbarPage(span("Movie Facts",style="font-weight:bold;text-align:center;"),  #tags$style(HTML(".navbar .navbar-default .navbar-static-top {margin-bottom:0px;padding-bottom:0px;}")),
+               tags$head(tags$style(HTML('* {font-family: "Tahoma"};'))),
+               tags$head(tags$style(".option{color: white;}")),
+               tags$head(tags$style(".selectize-input{height:200px;padding-top: 0px;}")),
+              
                tabPanel("Critics VS. Audience",
                         #tags$style(HTML(".tabbable > .nav > li > a {margin:0px;padding:0px;}")),
                dashboardPage(
@@ -100,10 +102,7 @@ ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navba
   dashboardSidebar(
     collapsed = FALSE,
     chooseSliderSkin("Flat"),
-    tags$head(
-      tags$style(HTML(".selectize-input {height:10px;padding-top: 0px;}"))
-    ),
- 
+
     selectizeInput(
       inputId = "movie", 
       label =tags$span("You may search for a particular movie:",style = "padding-left:0px;font-weight: bold;font-size:13px;margin-bottom:0px;"),
@@ -188,12 +187,12 @@ ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navba
         width = 8,
         height = "45em",
         #title = tagList(shiny::icon("bar-chart-o")),
-        tabPanel("I  Scattered Ratings",
+        tabPanel("I. Scattered Ratings",
                  plotlyOutput(outputId = "plot", height = "40em")),
-        tabPanel("II  Genre-wise Distribution of Ratings",
+        tabPanel("II. Genre-wise Distribution of Ratings",
                  div(img(src = "violin.png", height = 600, width = 600), style="text-align: center;")
                  ),
-        tabPanel("III  20 Most Divisive Films",
+        tabPanel("III. 20 Most Divisive Films",
                  div(img(src = "gaps.png", height = 600, width = 400), style="text-align: center;")
         )
 
@@ -201,9 +200,10 @@ ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navba
     ),
       
       box(width = 4,
-          tags$h4("Are film critics losing sync with audiences?",style = "padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;color:white;"),
-          tags$h4("What kind of movies that are acclaimed by professional reviewers are yet not likely to be enjoyed by most moviegoers?",style = "color:white;padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;"),
-          tags$h4("Visualizations answer such questions strikingly.",style = "padding-left:3px;margin-bottom:0px;font-family: Century Gothic, fantasy;color:white;")),
+          strong("Overview",style = "padding-left:3px;margin-bottom:0px;color:white;font-size:16px;"),
+          tags$h4("Are film critics losing sync with audiences?",style = "padding-left:3px;margin-bottom:0px;color:white;font-size:16px;"),
+          tags$h4("What kind of movies that are acclaimed by professional reviewers are yet not likely to be enjoyed by most moviegoers?",style = "color:white;padding-left:3px;margin-bottom:0px;font-size:16px;"),
+          tags$h4("Visualizations answer such questions strikingly.",style = "padding-left:3px;margin-bottom:0px;color:white;font-size:16px")),
 
       box(
         width = 4,
@@ -211,7 +211,7 @@ ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navba
         tags$style("div{line-height:15px;}"),
         tags$style("intro {padding-left:0px;font-size:14px;line-height:15px;margin-bottom:0px;}"),
         tags$style("gold {padding-left:0px;font-size:14px;line-height:15px;margin-bottom:0px;color:gold}"),
-        HTML("<intro><b>Tab I</b></intro>"),
+        HTML("<intro><b>Tab I. Scatter Ratings</b></intro>"),
         tags$br(),
         tags$br(),
         HTML("<intro>The bubble chart displays the distribution of Rotten Tomatoes' critic ratings (a.k.a. <gold>Tomatometers</gold>) and audience ratings for more than 2000 popular films. Box-office revenue is represented by bubble size, and the color of a bubble indicates the primary genre of the film.</intro>"),
@@ -222,12 +222,12 @@ ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navba
         tags$br(),
         HTML("<intro>The <gold>average ratio of Tomatometer rating to audience rating is used as a proxy for critic preference</gold>, which is reported in the box at the upper right corner.</intro>"),
         hr(),
-        HTML("<intro><b>Tab II</b></intro>"),
+        HTML("<intro><b>Tab II. Genre-wise Distribution of Ratings</b></intro>"),
         tags$br(),
         tags$br(),
         HTML("<intro>With violin plots, this chart illustrates the probablity distributions of both audience and critic ratings for movies of different genres. On the X axis, the genres are arrayed in descending order of critic preference.</intro>"),
         hr(),
-        HTML("<intro><b>Tab III</b></intro>"),
+        HTML("<intro><b>Tab III. 20 Most Devisive Films</b></intro>"),
         tags$br(),
         tags$br(),
         HTML("<intro>This chart displays the 20 movies with the greatest difference between Rotten Tomatoes' critic and audience ratings in the dataset. </intro>")
@@ -241,11 +241,13 @@ ui<-navbarPage("  Movie Facts",  tags$style(HTML(".navbar .navbar-default .navba
 
 )),
 #############################End of YF's UI#################################
-tabPanel("Script Sentiment Analysis",#new visualization layout here
+
+#############################Tab 2#################################
+tabPanel("Script Sentiment Analysis", #new visualization layout here
 dashboardPage(
   
   ####tab one starts
-  dashboardHeader(title =span("Script Sentiment Analysis",style="font-size:18px;")),
+  dashboardHeader(title =span("Script Sentiment Analysis",style="font-size:16px;font-family: Century Gothic, fantasy;")),
   dashboardSidebar(
     collapsed = FALSE,
     chooseSliderSkin("Flat"),
@@ -264,14 +266,14 @@ dashboardPage(
     shinyDashboardThemes(
       theme = "grey_dark"
     ),
-    
     tabItems(
+      
       # First tab content
       tabItem(tabName = "single",
               
               fluidRow(
-                box(width = 12,
-                    strong("Overview", style = "font-family: 'Arial'; font-size: 25px;"),
+                box(width = 6,
+                    strong("Overview", style = " font-size: 25px;"),
                     br(),
                     br(),
                     # p("As human beings, we show great empathy to individuals who 
@@ -281,21 +283,20 @@ dashboardPage(
                     #   experiences that further impact how they respond to certain emotions and how they perceive a given movie."),
                     p("Twists and turns, ups and downs, despair and exhilaration on the big screen can all be recorded and 
                         reflected in movie scripts. We scraped the scripts of a total of 46 best-rated movies 
-                        on IMDB and analyze their sentiment and emotional valence with visualizations from multiple perspectives. compare their critic preference score based on different genres."),
+                        on IMDB and analyze their sentiment and emotional valence with visualizations from multiple perspectives. compare their critic preference score based on different genres.",
+                      style="line-height:16px;font-size:13px"),
                     p("Tab 1 aims to retrieve and display various facts of a selected film including the title, rating, box office, and visualizations about movie script: the 
                         sentiment score, a word cloud as well as a word frequency bar chart. Tab 2 allows for comparing the sentiment in pairs across their running times. Tab 3 utilizes 
                         a bubble chart to demonstrate the relationship between the overall sentiment scores 
-                        and the critic preference ratio.")
-                )
+                        and the critic preference ratio.",style="line-height:16px;font-size:13px")
               ),
-              fluidRow(                  box(width = 12,
-                                             strong("Tab 1 Wordcloud & Term Frequency", style = "font-family: 'Arial'; font-size: 25px;"),
+     box(width = 6,
+                                             strong("Tab 1 Wordcloud & Term Frequency", style = "font-size: 25px;"),
                                              br(),
                                              br(),
                                              p("This tab takes a peek at the scripts by drawing word clouds and word 
                       frequency bar charts. The most common words and terms are highlighted in the word cloud. The character names are not stripped from the original 
-                        script. Therefore the most frequent terms are likely to be the names of the movie characters with the most screen presense.",
-                                               style = "font-family: 'Arial';")
+                        script. Therefore the most frequent terms are likely to be the names of the movie characters with the most screen presense.",style="line-height:16px;font-size:13px")
               )),
               
               fluidRow(
@@ -343,16 +344,16 @@ dashboardPage(
                     strong("Tab 2 Sentiment Arc Analysis", style = "font-size: 25px; font-weight: bold;"),
                     br(),
                     br(),
-                    p("This tab examines in more detail the positive or negative connocations in scripts with two sub-tabs."),
-                    p("Compare Sentiments of Two Movies", style = "text-decoration: underline;"),
+                    p("This tab examines the positive or negative connocations in scripts with two sub-tabs in detail.",style="line-height:16px;font-size:13px"),
+                    p("Compare Sentiments of Two Movies", style = "text-decoration: underline;line-height:16px;font-size:13px"),
                     p("The line chart displays how the sentiment in the scripts changes as the movie 
                         progresses to the end. The y-axis is the computed sentiment score, and the x-axis denotes 
                         the fraction of the script (from 0 to 1) we're looking at. You can interact with the plot by select two movies to compare 
                         from the drop-down menu and look at the dynamics and flucuations of sentiment
-                        in the film speeches."),
-                    p("Sentiment Plot by Genre", style = "text-decoration: underline;"),
+                        in the film speeches.",style="line-height:16px;font-size:13px"),
+                    p("Sentiment Plot by Genre", style = "text-decoration: underline;line-height:16px;font-size:13px"),
                     p("This line chart illustrates and juxtaposed the sentiment scores across the running time for movies of one particular genre. The y-axis is the calculated sentiment score, and the 
-                        x-axis is the fraction of the script (from 0 to 1). You can manually select any genre from the drop-down menu.")
+                        x-axis is the fraction of the script (from 0 to 1). You can manually select any genre from the drop-down menu.",style="line-height:16px;font-size:13px")
                 )
               ),
               
@@ -445,10 +446,10 @@ dashboardPage(
                     br(),
                     p("This tab aims to investigate how might movie scripts' emotions shape critics' 
                         and audiences' views on movies. The x-axis is the critic preference score using 
-                        data from RottenTomatoes and the y-axis is the average sentiment score of each movie."),
+                        data from RottenTomatoes and the y-axis is the average sentiment score of each movie.",style="line-height:16px;font-size:13px"),
                     p("Based on our graph, we can see that there is no detectable linear relationship between 
                         sentiments and critic preference. Movies' genres also seem to be uncorrelated with the 
-                        taste divergence between professionals and non-professionals.")
+                        taste divergence between professionals and non-professionals.",style="line-height:16px;font-size:13px")
                 )
               ),
               
@@ -459,56 +460,98 @@ dashboardPage(
                   height = "50em",
                   plotlyOutput("plotly_plot")
                 )
-              ),
+              )
               
-              fluidRow(
-                box(width = 12,
-                    strong("Conclusions and Discussions", style = "font-size: 25px; font-weight: bold;"),
-                    br(),
-                    br(),
-                    p("We aim to disentangle the commonly seen divergence between the taste differences 
-                        between movie critics and ordinary audiences. We deploy a RottenTomatoes dataset 
-                        containing approx. 2,000 popular movies from 1925 to 2017, a self-constructed 
-                        movie script dataset scraped from the Internet. We also developed a key metric-- 
-                        the critic preference score-- to measure the extent to which a given movie is 
-                        loved by critics but not so much by audiences. This metric is calculated as the 
-                        critic score divided by the audience score."),
-                    p("Here are our major findings:"),
-                    strong("(1) There is no doubt that good movies are good, and bad movies are bad."),
-                    p("The correlation coefficients between critic scores and audience scores are 
-                        always positive and remain high during the 92-year time span, which means 
-                        professional and non-professionals constantly share the same opinion about a movie."),
-                    strong("(2) Arthouse and romantic movies see the most disagreements."),
-                    p("Arthouse & International, Animation, and Kids & Families are more preferred by critics, 
-                        whistle Romance is more enjoyed by the audience. Plots, CGI, artistic style, and 
-                        storyline tempo contribute most to their debates."),
-                    strong("(3) Sentiments mined through scripts are not associated with the taste difference."),
-                    p("There is no discernable correlation between the preference divergence between movie 
-                        dialogues' texts and the rating distinction.")
-                )
-              ),
       )
+    ) #end of tabitems
       
-    )
-  )
+    ) #end of dashboardBody
+  ) #end of dashboardpage
+), 
+
+tabPanel("Read More",#new visualization layout here
+         dashboardPage(
+           dashboardHeader(title=span("Read More", style="font-size:20px;font-family: Century Gothic, fantasy;")),
+           dashboardSidebar(
+             collapsed = FALSE,
+             chooseSliderSkin("Flat"),
+             tags$head(
+               tags$style(HTML(".selectize-input {height:10px;padding-top: 0px;}"))
+             ),
+             
+             sidebarMenu(id="must",
+               menuItem("Discussion & Conclusion", tabName = "conclusion", icon = icon("file-signature")),
+               menuItem("About the Team", tabName = "author", icon = icon("user-secret"))
+               
+             )
+           ),
+           
+           dashboardBody(
+             shinyDashboardThemes(
+               theme = "grey_dark"
+             ),
+             
+             tabItems(
+               # Conclusion tab content
+               tabItem(tabName = "conclusion",
+                       fluidRow(
+                         box(width = 12,
+                             strong("Conclusions and Discussions", style = "font-size: 25px; font-weight: bold;"),
+                             br(),
+                             br(),
+                             p("We aim to disentangle and analyze the massive divergence of taste 
+                        between film critics and common movie-goers. To begin with, we acquire and utilize a RottenTomatoes dataset 
+                        containing approx. 2,000 most-reviewed movies, and 46 movie scripts scraped from the Internet. We also construct a key indicator—— 
+                        the critic preference score——to measure how much a movie is better received by the critics than the audiences. This metric is the ratio of the audience rating to the critic rating (tomatometer).",style="line-height:18px;"),
+                             p("Here are several key findings of our analysis:",style="line-height:18px;"),
+                             strong("(1) Good movies are generally considered good, and bad movies are generally considered bad."),
+                             p("The correlation between the critic scores and audience scores is significantly positive, which suggests that 
+                        professional reviewers and average movie enjoyers genearlly coincide in their opinions towards a movie.",style="line-height:18px;"),
+                             strong("(2) Art house and romantic films cause the greatest disaccords.",style="line-height:18px;"),
+                             p("Arthouse & International, Animation, and Kids & Families are strongly preferred by critics, 
+                        while Romance is more received by common audience. Plots, CGI, artistic style, and 
+                        storyline tempo are ikely to  contribute to such divergences.",style="line-height:18px;"),
+                             strong("(3) Sentiment doesn't matter."),
+                             p("There is no discernable association of critic preference with positive or negative sentiment perceived in a movie's script.",style="line-height:18px;")
+                         )
+                       )
+               ),
+               tabItem(tabName="author",
+                       div(img(src = "team.png",width = 650), style="text-align: center;padding-top:50px;padding-bottom:30px"),
+                       box(width=12,
+                           HTML('<p style="font-size:16px;line-height:20px;"><b>Zhiqing Li</b> is about to graduate from Columbia University, Master of Arts in Quantitative Methods in the Social Science program (Data Science Focus) in May 2022. She is dedicated to business analytics in financial industries and marketing science. She can be reached at Zhiqing.li@columbia.edu.</p>'),
+                           br(),
+                           HTML('<p style="font-size:16px;line-height:20px;"><b>Yunfan Ling</b> is pursuing a master’s degree of Columbia University’s Quantitative Methods in the Scocial Sciences Program (Data Science Focus). He currently works as a department research assistant. He is enthusiastic about creating useless digital interactive arts and he would love to collaborate with anyone who is also interested. He can be reached at yl4811@columbia.edu.</p>'),
+                           br(),
+                           HTML('<p style="font-size:16px;line-height:20px;"><b>Jonathan Wang</b>, a student, a data scientist, an auditor, a music producer, an illustrator, and an adventurer.</p>'),
+                           br(),
+                           HTML('<p style="font-size:16px;line-height:20px;"><b>Stacey Zuo</b> is pursuing a Master’s degree in Quantitative Methods in the Social Sciences program at Columbia University. Before she came to QMSS, she graduated from Wesleyan University with a major in Psychology in 2021. She is dedicated to data analytics in marketing & advertising. She can be reached at mz2875@columbia.edu.</p>')
+
+                           
+                           ))
+             )
+           )
+         )
+)#end of tabPanel
+
 )
 
 
 
-)
-)
+
+
 
 
 
 server<-function(input, output,session) {
   
 observe({
-  if((input$box!="I  Scattered Ratings")&(!input$sidebarCollapsed)){
+  if((input$box!="I. Scattered Ratings")&(!input$sidebarCollapsed)){
 shinyjs::toggleClass(selector = "body", class = "sidebar-collapse")}
   })
   
   observe({
-    if((input$box=="I  Scattered Ratings")&(input$sidebarCollapsed)){
+    if((input$box=="I. Scattered Ratings")&(input$sidebarCollapsed)){
       shinyjs::toggleClass(selector = "body", class = "sidebar-collapse")}
   })  
   
@@ -520,6 +563,11 @@ observe({
 })
 
 ##################server of Jianing's Dashboard starts
+
+observe({if(!input$must%in%c("conclusion","author")){
+  updateTabItems(session, "must", selected = "conclusion")}
+})
+
 movie = reactive({
   df = movie_df %>%
     filter(name == input$name)
