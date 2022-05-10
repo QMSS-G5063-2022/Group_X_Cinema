@@ -10,7 +10,7 @@ We are interested in exploring cinema with Data Visualization. As a visual mediu
 
 ### Topics
 - Critic Ratings VS. Audience Ratings
-- Script Sentiment
+- Script Sentiment Analysis
 
 ### Contributors
 - Zhiqing Li  zl3064@columbia.edu
